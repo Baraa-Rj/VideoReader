@@ -2,10 +2,8 @@
 
 echo "Building Simple Image Player with MOC..."
 
-# Create build directory
 mkdir -p build_simple
 
-# Find Qt MOC
 MOC_PATH=$(find /usr -name "moc" -type f 2>/dev/null | grep qt6 | head -1)
 if [ -z "$MOC_PATH" ]; then
     echo "Error: Qt MOC not found!"
@@ -14,18 +12,19 @@ fi
 
 echo "Using MOC: $MOC_PATH"
 
-# Run MOC on mainwindow.h
-echo "Running MOC on mainwindow.h..."
+echo "Running MOC on header files..."
 $MOC_PATH include/mainwindow.h -o build_simple/moc_mainwindow.cpp
+$MOC_PATH include/image_processor.h -o build_simple/moc_image_processor.cpp
+$MOC_PATH include/playback_controller.h -o build_simple/moc_playback_controller.cpp
+$MOC_PATH include/ui_controller.h -o build_simple/moc_ui_controller.cpp
 
 if [ $? -ne 0 ]; then
     echo "MOC failed!"
     exit 1
 fi
 
-echo "MOC successful, generated moc_mainwindow.cpp"
+echo "MOC successful, generated MOC files"
 
-# Compile with g++ including the generated MOC file
 echo "Compiling with g++..."
 g++ -std=c++17 \
     -I/usr/include/x86_64-linux-gnu/qt6 \
@@ -37,7 +36,13 @@ g++ -std=c++17 \
     -Ibuild_simple \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/image_processor.cpp \
+    src/playback_controller.cpp \
+    src/ui_controller.cpp \
     build_simple/moc_mainwindow.cpp \
+    build_simple/moc_image_processor.cpp \
+    build_simple/moc_playback_controller.cpp \
+    build_simple/moc_ui_controller.cpp \
     -o build_simple/SimpleImagePlayer \
     -lQt6Core -lQt6Widgets -lQt6Gui \
     -lopencv_core -lopencv_imgproc -lopencv_imgcodecs \

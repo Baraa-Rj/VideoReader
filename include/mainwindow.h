@@ -2,14 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTimer>
-#include <QPushButton>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QFileDialog>
-#include <QSpinBox>
-#include <opencv2/opencv.hpp>
+#include <QStandardPaths>
+#include <QMessageBox>
+
+class ImageProcessor;
+class PlaybackController;
+class UIController;
 
 class MainWindow : public QMainWindow
 {
@@ -20,31 +19,24 @@ public:
     ~MainWindow();
 
 private slots:
-    void loadFolder();
-    void playPause();
-    void fpsChanged();
+    void onImagesLoaded(int count);
+    void onLoadError(const QString &error);
+    void onFrameChanged(int frameIndex);
+    void onPlaybackStarted();
+    void onPlaybackStopped();
+    void onPlaybackPaused();
+    void onLoadFolderRequested();
+    void onPlayPauseRequested();
+    void onFPSChanged(int fps);
 
 private:
-    QLabel *imageLabel;
-    QPushButton *loadButton;
-    QPushButton *playButton;
-    QSpinBox *fpsSpinBox;
+    ImageProcessor *imageProcessor;
+    PlaybackController *playbackController;
+    UIController *uiController;
     
-    QStringList imagePaths;      // Image file paths
-    int currentIndex;            // Current frame index
-    bool isPlaying;              // Playing state
-    int fps;                     // Frames per second
-    
-    // Timer
-    QTimer *timer;
-    
-    // Helper functions
-    void setupUI();              // Setup user interface
-    void loadImages(const QString &folderPath);
-    void showImage(int index);
-    void updateButtons();
-    void updateTimer();
-    void nextFrame();            // Internal function for timer
+    void setupConnections();
+    void loadFolder();
+    void playPause();
 };
 
-#endif // MAINWINDOW_H
+#endif
