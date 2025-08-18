@@ -12,7 +12,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-add_subdirectory(headers)
 add_subdirectory(src)
 
 message(STATUS "Qt6 version: ${Qt6_VERSION}")

@@ -1,3 +1,0 @@
-target_include_directories(SimpleImagePlayer PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)

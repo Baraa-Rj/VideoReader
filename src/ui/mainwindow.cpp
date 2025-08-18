@@ -1,7 +1,7 @@
-#include "mainwindow.h"
-#include "image_processor.h"
-#include "playback_controller.h"
-#include "ui_controller.h"
+#include "ui/mainwindow.h"
+#include "core/processors/image_processor.h"
+#include "core/controllers/playback_controller.h"
+#include "ui/ui_controller.h"
 #include <QApplication>
 #include <QDir>
 #include <QMessageBox>

@@ -1,4 +1,4 @@
-#include "image_processor.h"
+#include "core/processors/image_processor.h"
 #include <QDir>
 #include <QDirIterator>
 #include <opencv2/opencv.hpp>

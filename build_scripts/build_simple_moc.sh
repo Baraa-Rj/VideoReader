@@ -46,6 +46,7 @@ g++ -std=c++17 \
     -o build_simple/SimpleImagePlayer \
     -lQt6Core -lQt6Widgets -lQt6Gui \
     -lopencv_core -lopencv_imgproc -lopencv_imgcodecs \
+    -pthread \
     -fPIC \
     -DQT_WIDGETS_LIB \
     -DQT_CORE_LIB \

@@ -2,7 +2,8 @@
 #define PLAYBACKCONTROLLER_H
 
 #include <QObject>
-#include <QTimer>
+#include <thread>
+#include <atomic>
 
 class PlaybackController : public QObject
 {
@@ -28,17 +29,15 @@ signals:
     void playbackStopped();
     void playbackPaused();
 
-private slots:
-    void nextFrame();
-
 private:
-    QTimer *timer;
+    void runLoop();
+
+    std::thread playbackThread;
+    std::atomic<bool> playing;
+    std::atomic<bool> stopRequested;
     int fps;
     int currentFrame;
     int frameCount;
-    bool playing;
-    
-    void updateTimer();
 };
 
 #endif

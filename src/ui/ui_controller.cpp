@@ -1,4 +1,4 @@
-#include "ui_controller.h"
+#include "ui/ui_controller.h"
 #include <QWidget>
 
 UIController::UIController(QObject *parent)

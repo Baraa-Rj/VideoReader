@@ -1,28 +1,25 @@
-#include "playback_controller.h"
+#include "core/controllers/playback_controller.h"
+#include <chrono>
 
 PlaybackController::PlaybackController(QObject *parent)
     : QObject(parent)
+    , playing(false)
+    , stopRequested(false)
     , fps(30)
     , currentFrame(0)
     , frameCount(0)
-    , playing(false)
 {
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &PlaybackController::nextFrame);
 }
 
 PlaybackController::~PlaybackController()
 {
-    if (timer->isActive()) {
-        timer->stop();
-    }
+    stop();
 }
 
 void PlaybackController::setFPS(int newFps)
 {
-    if (fps != newFps && newFps > 0) {
+    if (newFps > 0) {
         fps = newFps;
-        updateTimer();
     }
 }
 
@@ -33,36 +30,46 @@ int PlaybackController::getFPS() const
 
 void PlaybackController::start()
 {
-    if (frameCount > 0 && !playing) {
-        playing = true;
-        timer->start();
-        emit playbackStarted();
+    if (frameCount <= 0) return;
+    
+    if (playing.load()) return;
+    
+    playing.store(true);
+    stopRequested.store(false);
+    
+    if (!playbackThread.joinable()) {
+        playbackThread = std::thread(&PlaybackController::runLoop, this);
     }
+    
+    emit playbackStarted();
 }
 
 void PlaybackController::stop()
 {
-    if (playing) {
-        playing = false;
-        timer->stop();
-        currentFrame = 0;
-        emit playbackStopped();
-        emit frameChanged(currentFrame);
+    if (!playing.load() && !playbackThread.joinable()) return;
+    
+    stopRequested.store(true);
+    playing.store(false);
+    
+    if (playbackThread.joinable()) {
+        playbackThread.join();
     }
+    
+    currentFrame = 0;
+    emit playbackStopped();
+    emit frameChanged(0);
 }
 
 void PlaybackController::pause()
 {
-    if (playing) {
-        playing = false;
-        timer->stop();
+    if (playing.exchange(false)) {
         emit playbackPaused();
     }
 }
 
 bool PlaybackController::isPlaying() const
 {
-    return playing;
+    return playing.load();
 }
 
 void PlaybackController::setFrameCount(int count)
@@ -77,7 +84,7 @@ void PlaybackController::setCurrentFrame(int frame)
 {
     if (frame >= 0 && frame < frameCount) {
         currentFrame = frame;
-        emit frameChanged(currentFrame);
+        emit frameChanged(frame);
     }
 }
 
@@ -86,22 +93,24 @@ int PlaybackController::getCurrentFrame() const
     return currentFrame;
 }
 
-void PlaybackController::nextFrame()
+void PlaybackController::runLoop()
 {
-    if (frameCount == 0) return;
+    using namespace std::chrono;
     
-    currentFrame++;
-    if (currentFrame >= frameCount) {
-        currentFrame = 0;
-    }
-    
-    emit frameChanged(currentFrame);
-}
-
-void PlaybackController::updateTimer()
-{
-    if (fps > 0) {
-        int interval = 1000 / fps;
-        timer->setInterval(interval);
+    while (!stopRequested.load()) {
+        if (playing.load()) {
+            if (frameCount > 0) {
+                currentFrame++;
+                if (currentFrame >= frameCount) {
+                    currentFrame = 0;
+                }
+                emit frameChanged(currentFrame);
+            }
+            
+            auto frameTime = milliseconds(1000 / fps);
+            std::this_thread::sleep_for(frameTime);
+        } else {
+            std::this_thread::sleep_for(milliseconds(16));
+        }
     }
 }
