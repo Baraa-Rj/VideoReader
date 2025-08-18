@@ -13,10 +13,10 @@ fi
 echo "Using MOC: $MOC_PATH"
 
 echo "Running MOC on header files..."
-$MOC_PATH ui/mainwindow.h -o build_simple/moc_mainwindow.cpp
-$MOC_PATH core/processors/image_processor.h -o build_simple/moc_image_processor.cpp
-$MOC_PATH core/controllers/playback_controller.h -o build_simple/moc_playback_controller.cpp
-$MOC_PATH ui/ui_controller.h -o build_simple/moc_ui_controller.cpp
+$MOC_PATH headers/ui/mainwindow.h -o build_simple/moc_mainwindow.cpp
+$MOC_PATH headers/core/processors/image_processor.h -o build_simple/moc_image_processor.cpp
+$MOC_PATH headers/core/controllers/playback_controller.h -o build_simple/moc_playback_controller.cpp
+$MOC_PATH headers/ui/ui_controller.h -o build_simple/moc_ui_controller.cpp
 
 if [ $? -ne 0 ]; then
     echo "MOC failed!"
@@ -32,15 +32,13 @@ g++ -std=c++17 \
     -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
     -I/usr/include/x86_64-linux-gnu/qt6/QtGui \
     -I/usr/include/opencv4 \
-    -Icore/controllers \
-    -Icore/processors \
-    -Iui \
+    -Iheaders \
     -Ibuild_simple \
-    core/main.cpp \
-    ui/mainwindow.cpp \
-    core/processors/image_processor.cpp \
-    core/controllers/playback_controller.cpp \
-    ui/ui_controller.cpp \
+    src/core/main.cpp \
+    src/ui/mainwindow.cpp \
+    src/core/processors/image_processor.cpp \
+    src/core/controllers/playback_controller.cpp \
+    src/ui/ui_controller.cpp \
     build_simple/moc_mainwindow.cpp \
     build_simple/moc_image_processor.cpp \
     build_simple/moc_playback_controller.cpp \

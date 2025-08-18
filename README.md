@@ -6,23 +6,25 @@ A Qt-based application for viewing image sequences with low coupling architectur
 
 ```
 videoReader/
-├── core/                          # Core application components
-│   ├── main.cpp                   # Application entry point
-│   ├── controllers/               # Playback control logic
-│   │   ├── playback_controller.h
-│   │   ├── playback_controller.cpp
-│   │   └── CMakeLists.txt
-│   ├── processors/                # Image processing logic
-│   │   ├── image_processor.h
-│   │   ├── image_processor.cpp
-│   │   └── CMakeLists.txt
-│   └── CMakeLists.txt
-├── ui/                            # User interface components
-│   ├── mainwindow.h               # Main window class
-│   ├── mainwindow.cpp
-│   ├── ui_controller.h            # UI management
-│   ├── ui_controller.cpp
-│   └── CMakeLists.txt
+├── headers/                       # Header files (.h)
+│   ├── core/                      # Core application headers
+│   │   ├── controllers/           # Playback control headers
+│   │   │   └── playback_controller.h
+│   │   └── processors/            # Image processing headers
+│   │       └── image_processor.h
+│   └── ui/                        # User interface headers
+│       ├── mainwindow.h           # Main window class
+│       └── ui_controller.h        # UI management
+├── src/                           # Source files (.cpp)
+│   ├── core/                      # Core application sources
+│   │   ├── main.cpp               # Application entry point
+│   │   ├── controllers/           # Playback control sources
+│   │   │   └── playback_controller.cpp
+│   │   └── processors/            # Image processing sources
+│   │       └── image_processor.cpp
+│   └── ui/                        # User interface sources
+│       ├── mainwindow.cpp         # Main window implementation
+│       └── ui_controller.cpp      # UI management
 ├── build_scripts/                  # Build automation
 │   └── build_simple_moc.sh        # Custom build script
 ├── docs/                          # Documentation
@@ -35,6 +37,8 @@ videoReader/
 
 The project follows a **low coupling** architecture with clear separation of concerns:
 
+- **Headers**: Contains all interface definitions and class declarations
+- **Source**: Contains all implementation files
 - **Core**: Contains the main application logic and business components
 - **UI**: Handles all user interface and presentation logic
 - **Controllers**: Manage playback timing and frame progression
@@ -78,8 +82,9 @@ make
 
 ## Benefits of the New Structure
 
-1. **Logical Organization**: Files are grouped by functionality
-2. **Easy Navigation**: Clear separation between core logic and UI
+1. **Logical Organization**: Headers and sources are clearly separated
+2. **Easy Navigation**: Clear distinction between interface and implementation
 3. **Modular Builds**: Each component can be built independently
 4. **Scalability**: Easy to add new features in appropriate directories
 5. **Maintainability**: Clear dependencies and responsibilities
+6. **Standard Layout**: Follows common C++ project organization patterns
