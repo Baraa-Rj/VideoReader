@@ -1,5 +1,6 @@
 #include "core/controllers/playback_controller.h"
 #include <chrono>
+#include <iostream>
 
 PlaybackController::PlaybackController(QObject *parent)
     : QObject(parent)
@@ -97,6 +98,9 @@ void PlaybackController::runLoop()
 {
     using namespace std::chrono;
     
+    auto startTime = steady_clock::now();
+    int elapsedSeconds = 0;
+    
     while (!stopRequested.load()) {
         if (playing.load()) {
             if (frameCount > 0) {
@@ -109,6 +113,14 @@ void PlaybackController::runLoop()
             
             auto frameTime = milliseconds(1000 / fps);
             std::this_thread::sleep_for(frameTime);
+            
+            auto currentTime = steady_clock::now();
+            auto elapsed = duration_cast<seconds>(currentTime - startTime).count();
+            
+            if (elapsed > elapsedSeconds) {
+                elapsedSeconds = elapsed;
+                std::cout << "Elapsed time: " << elapsedSeconds << " seconds" << std::endl;
+            }
         } else {
             std::this_thread::sleep_for(milliseconds(16));
         }
