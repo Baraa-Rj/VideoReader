@@ -96,12 +96,10 @@ int PlaybackController::getCurrentFrame() const
 
 void PlaybackController::runLoop()
 {
-    using namespace std::chrono;
-    
-    auto startTime = steady_clock::now();
     int elapsedSeconds = 0;
     
     while (!stopRequested.load()) {
+       auto startTime = std::chrono::steady_clock::now();
         if (playing.load()) {
             if (frameCount > 0) {
                 currentFrame++;
@@ -111,18 +109,17 @@ void PlaybackController::runLoop()
                 emit frameChanged(currentFrame);
             }
             
-            auto frameTime = milliseconds(1000 / fps);
+            auto frameTime = std::chrono::milliseconds(1000 / fps);
             std::this_thread::sleep_for(frameTime);
             
-            auto currentTime = steady_clock::now();
-            auto elapsed = duration_cast<seconds>(currentTime - startTime).count();
-            
-            if (elapsed > elapsedSeconds) {
-                elapsedSeconds = elapsed;
-                std::cout << "Elapsed time: " << elapsedSeconds << " seconds" << std::endl;
-            }
+            auto currentTime = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+
+                     elapsedSeconds = elapsed;
+                std::cout << "Elapsed time: " << elapsedSeconds << " milliseconds" << std::endl;
+
         } else {
-            std::this_thread::sleep_for(milliseconds(16));
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     }
 }
