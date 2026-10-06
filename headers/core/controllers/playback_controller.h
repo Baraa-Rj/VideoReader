@@ -31,13 +31,17 @@ signals:
 
 private:
     void runLoop();
+    // Joins the playback thread without emitting any signals. Safe to call
+    // from the destructor, where emitting would reach already-destroyed peers.
+    void joinPlaybackThread();
 
     std::thread playbackThread;
     std::atomic<bool> playing;
     std::atomic<bool> stopRequested;
-    int fps;
-    int currentFrame;
-    int frameCount;
+    // Shared with the playback thread, so every access must be atomic.
+    std::atomic<int> fps;
+    std::atomic<int> currentFrame;
+    std::atomic<int> frameCount;
 };
 
 #endif

@@ -19,6 +19,18 @@ UIController::~UIController()
 
 void UIController::setupUI(QWidget *centralWidget)
 {
+    // Without a parent widget the layout never adopts the children below, so
+    // every widget created here would leak.
+    if (!centralWidget) {
+        return;
+    }
+    
+    // A second call would overwrite the pointers to the first widget set,
+    // orphaning it, and attach a second layout to the same widget.
+    if (mainLayout) {
+        return;
+    }
+    
     mainLayout = new QVBoxLayout(centralWidget);
     
     imageLabel = new QLabel("Click 'Load Folder' to select images");
