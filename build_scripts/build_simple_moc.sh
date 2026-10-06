@@ -13,15 +13,18 @@ fi
 echo "Using MOC: $MOC_PATH"
 
 echo "Running MOC on header files..."
-$MOC_PATH headers/ui/mainwindow.h -o build_simple/moc_mainwindow.cpp
-$MOC_PATH headers/core/processors/image_processor.h -o build_simple/moc_image_processor.cpp
-$MOC_PATH headers/core/controllers/playback_controller.h -o build_simple/moc_playback_controller.cpp
-$MOC_PATH headers/ui/ui_controller.h -o build_simple/moc_ui_controller.cpp
+# Check every invocation: testing $? once only reports on the last one.
+run_moc() {
+    if ! "$MOC_PATH" "$1" -o "$2"; then
+        echo "MOC failed on $1!"
+        exit 1
+    fi
+}
 
-if [ $? -ne 0 ]; then
-    echo "MOC failed!"
-    exit 1
-fi
+run_moc headers/ui/mainwindow.h build_simple/moc_mainwindow.cpp
+run_moc headers/core/processors/image_processor.h build_simple/moc_image_processor.cpp
+run_moc headers/core/controllers/playback_controller.h build_simple/moc_playback_controller.cpp
+run_moc headers/ui/ui_controller.h build_simple/moc_ui_controller.cpp
 
 echo "MOC successful, generated MOC files"
 

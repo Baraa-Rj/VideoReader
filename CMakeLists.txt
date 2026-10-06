@@ -10,9 +10,18 @@ find_package(OpenCV REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+# AUTOUIC must stay off: the project has no Qt Designer forms, and it treats the
+# hand-written header ui_controller.h as a generated form for a missing
+# controller.ui, which breaks the build.
+set(CMAKE_AUTOUIC OFF)
 
 add_subdirectory(src)
+
+option(VIDEOREADER_BUILD_TESTS "Build the unit tests" ON)
+if(VIDEOREADER_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 message(STATUS "Qt6 version: ${Qt6_VERSION}")
 message(STATUS "OpenCV version: ${OpenCV_VERSION}")
